@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BSCS Quiz Bee</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;600&display=swap');
+
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at center, #0f0c29, #302b63, #24243e);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* --- Container --- */
+.container {
+  width: 90%;
+  max-width: 850px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 25px;
+  padding: 40px;
+  box-shadow: 0 0 40px rgba(0, 255, 255, 0.2);
+  border: 2px solid rgba(0, 255, 255, 0.5);
+  animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.2em;
+  text-shadow: 0 0 25px #00ffff;
+  margin-bottom: 25px;
+}
+
+/* --- Difficulty Selection --- */
+.difficulty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.difficulty h3 {
+  font-size: 1.4em;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px #00ffff;
+}
+
+.difficulty button {
+  background: none;
+  border: 2px solid #00ffff;
+  color: #00ffff;
+  padding: 15px 25px;
+  margin: 10px;
+  border-radius: 15px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: 0.2s;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px #00ffff;
+}
+
+.difficulty button:hover {
+  background: #00ffff;
+  color: #111;
+  box-shadow: 0 0 30px #00ffff;
+}
+
+/* --- Quiz Area --- */
+.question {
+  font-size: 1.8em;
+  margin: 25px 0;
+  text-shadow: 0 0 15px #f1c40f;
+}
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.choice-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 5px auto;
+  padding: 15px 20px;
+  border-radius: 15px;
+  border: 2px solid #fff;
+  background: transparent;
+  color: #fff;
+  font-size: 1.1em;
+  cursor: pointer;
+  width: 80%;
+  max-width: 450px;
+  transition: 0.3s;
+  text-shadow: 0 0 5px #fff;
+}
+
+.choice-label {
+  font-weight: bold;
+  margin-right: 12px;
+  color: #00ffff;
+  font-size: 1.1em;
+  text-shadow: 0 0 10px #00ffff;
+}
+
+.choice-btn:hover {
+  background: #00ffff;
+  color: #111;
+  box-shadow: 0 0 20px #00ffff;
+}
+
+#timer {
+  font-size: 1.8em;
+  margin-bottom: 15px;
+  font-family: 'Orbitron', sans-serif;
+  text-shadow: 0 0 25px #00ffff;
+}
+
+.next-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.next-btn {
+  padding: 16px 50px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #0f0f0f;
+  background: #00ff99;
+  border: none;
+  border-radius: 16px;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-shadow: 0 0 10px #00ffcc;
+  box-shadow: 0 0 10px #00ff99, 0 0 30px #00ff99, 0 0 60px #00ff99;
+  transition: all 0.25s ease-in-out;
+  animation: neonPulse 2s infinite alternate;
+}
+
+.next-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 20px #00ff99, 0 0 50px #00ff99, 0 0 100px #00ff99;
+}
+
+@keyframes neonPulse {
+  0%, 100% { box-shadow: 0 0 15px #00ff99, 0 0 35px #00ff99, 0 0 70px #00ff99; }
+  50% { box-shadow: 0 0 30px #00ff99, 0 0 60px #00ff99, 0 0 120px #00ff99; }
+}
+
+.answer-reveal {
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  margin-top: 15px;
+  padding: 10px;
+  font-style: italic;
+  font-size: 1.2em;
+  text-shadow: 0 0 10px #ff00ff;
+}
+
+#result {
+  margin-top: 30px;
+  font-size: 1.5em;
+  animation: fadeIn 1s ease;
+}
+
+.correct {
+  background: #39ff14 !important;
+  color: #111 !important;
+  box-shadow: 0 0 20px #39ff14;
+}
+
+.wrong {
+  background: #ff1744 !important;
+  box-shadow: 0 0 20px #ff1744;
+}
+
+/* --- Transition Page --- */
+#transitionPage {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, #001f3f, #000);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #00ffff;
+  font-family: 'Orbitron', sans-serif;
+  text-align: center;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+#transitionPage.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#transitionPage h1 {
+  font-size: 3em;
+  text-shadow: 0 0 30px #00ffff;
+}
+
+#transitionPage p {
+  font-size: 1.5em;
+  color: #fff;
+  text-shadow: 0 0 15px #00ffff;
+}
+
+/* --- Restart Button --- */
+#restartBtn {
+  margin-top: 30px;
+  padding: 14px 45px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #111;
+  background: #00ffff;
+  border: none;
+  border-radius: 12px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 20px #00ffff, 0 0 50px #00ffff;
+  transition: 0.3s;
+  display: none;
+}
+
+#restartBtn:hover {
+  background: #00ffcc;
+  transform: scale(1.05);
+  box-shadow: 0 0 30px #00ffff, 0 0 70px #00ffff;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1> Quiz Bee </h1>
+
+  <!-- Centered Start Page -->
+  <div id="difficultyBox" class="difficulty">
+    <h3>Choose Difficulty Level:</h3>
+    <button onclick="selectDifficulty('easy')">🟢 Easy</button>
+    <button onclick="selectDifficulty('advanced')">🟡 Advanced</button>
+    <button onclick="selectDifficulty('hard')">🔴 Hard</button>
+  </div>
+
+  <!-- Hidden Quiz Box -->
+  <div id="quizBox" style="display:none;">
+    <div id="timer">⏰ 15s</div>
+    <div id="questionBox" class="question"></div>
+    <div id="choicesBox" class="choices"></div>
+    <div id="answerReveal" class="answer-reveal"></div>
+    <div class="next-container">
+      <button id="next-btn" class="next-btn">Next ➜</button>
+    </div>
+    <div id="result"></div>
+  </div>
+</div>
+
+<!-- Transition + Congratulations Page -->
+<div id="transitionPage">
+  <h1 id="transitionTitle">Next Level</h1>
+  <p id="transitionCountdown">Starting in 3...</p>
+  <button id="restartBtn" onclick="restartQuiz()">🔁 Back to Start</button>
+</div>
+
+<script>
+/* === Same JS as before === */
+const questionSets = {
+  easy: [
+    { question: "Which device is used to display output?", choices: ["Monitor", "Keyboard", "Scanner", "Mouse"], answer: "Monitor" },
+    { question: "What does CPU stand for?", choices: ["Central Process Unit", "Central Processing Unit", "Computer Personal Unit", "Central Power Unit"], answer: "Central Processing Unit" }
+  ],
+  advanced: [
+    { question: "Which part of the computer is the brain?", choices: ["Motherboard", "CPU", "RAM", "Hard Drive"], answer: "CPU" },
+    { question: "What kind of memory is non-volatile?", choices: ["RAM", "ROM", "Cache", "Register"], answer: "ROM" }
+  ],
+  hard: [
+    { question: "Who invented the first mechanical computer?", choices: ["Alan Turing", "Charles Babbage", "John von Neumann", "Blaise Pascal"], answer: "Charles Babbage" },
+    { question: "What was the first electronic general-purpose computer?", choices: ["ENIAC", "UNIVAC", "EDSAC", "Colossus"], answer: "ENIAC" }
+  ]
+};
+
+let selectedSet = [];
+let current = 0;
+let score = 0;
+let timer;
+let timeLeft = 15;
+let answered = false;
+let currentDifficulty = "easy";
+
+const difficultyBox = document.getElementById("difficultyBox");
+const quizBox = document.getElementById("quizBox");
+const questionBox = document.getElementById("questionBox");
+const choicesBox = document.getElementById("choicesBox");
+const timerDisplay = document.getElementById("timer");
+const nextBtn = document.getElementById("next-btn");
+const answerReveal = document.getElementById("answerReveal");
+const transitionPage = document.getElementById("transitionPage");
+const transitionTitle = document.getElementById("transitionTitle");
+const transitionCountdown = document.getElementById("transitionCountdown");
+const restartBtn = document.getElementById("restartBtn");
+
+function selectDifficulty(level) {
+  currentDifficulty = level;
+  selectedSet = questionSets[level];
+  difficultyBox.style.display = "none";
+  quizBox.style.display = "block";
+  current = 0;
+  score = 0;
+  showQuestion();
+  startTimer();
+}
+
+function showQuestion() {
+  answered = false;
+  answerReveal.textContent = "";
+  const q = selectedSet[current];
+  questionBox.textContent = q.question;
+  choicesBox.innerHTML = "";
+
+  const letters = ["A", "B", "C", "D"];
+  q.choices.forEach((choice, index) => {
+    const btn = document.createElement("button");
+    btn.className = "choice-btn";
+    btn.innerHTML = `<span class="choice-label">${letters[index]}.</span> ${choice}`;
+    btn.onclick = () => selectAnswer(choice, btn);
+    choicesBox.appendChild(btn);
+  });
+}
+
+function selectAnswer(choice, btn) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timer);
+  const correct = selectedSet[current].answer;
+  const buttons = choicesBox.querySelectorAll("button");
+  buttons.forEach(b => {
+    if (b.textContent.includes(correct)) b.classList.add("correct");
+    else if (b === btn && !b.textContent.includes(correct)) b.classList.add("wrong");
+    b.disabled = true;
+  });
+  if (choice === correct) {
+    score++;
+    answerReveal.innerHTML = `✅ Correct! The answer is <b>${correct}</b>`;
+  } else {
+    answerReveal.innerHTML = `❌ Wrong! The correct answer is <b>${correct}</b>`;
+  }
+}
+
+function startTimer() {
+  let timePerQuestion = timeLeft;
+  timerDisplay.textContent = `⏰ ${timePerQuestion}s`;
+  timer = setInterval(() => {
+    timePerQuestion--;
+    timerDisplay.textContent = `⏰ ${timePerQuestion}s`;
+    if (timePerQuestion <= 0) {
+      clearInterval(timer);
+      if (!answered) revealAnswer();
+    }
+  }, 1000);
+}
+
+function revealAnswer() {
+  const correct = selectedSet[current].answer;
+  const buttons = choicesBox.querySelectorAll("button");
+  buttons.forEach(b => {
+    if (b.textContent.includes(correct)) b.classList.add("correct");
+    else b.disabled = true;
+  });
+  answerReveal.innerHTML = `⏰ Time's up! The correct answer is <b>${correct}</b>`;
+}
+
+nextBtn.addEventListener("click", () => {
+  current++;
+  if (current < selectedSet.length) {
+    showQuestion();
+    clearInterval(timer);
+    startTimer();
+  } else {
+    moveToNextLevel();
+  }
+});
+
+function moveToNextLevel() {
+  if (currentDifficulty === "easy") showTransition("Advanced Level", "advanced");
+  else if (currentDifficulty === "advanced") showTransition("Hard Level", "hard");
+  else showTransition("🏆 Quiz Finished!", "end");
+}
+
+function showTransition(nextLevelText, nextLevelKey) {
+  transitionPage.classList.add("active");
+  transitionTitle.textContent = nextLevelText;
+  let countdown = 3;
+  transitionCountdown.textContent = `Starting in ${countdown}...`;
+  restartBtn.style.display = "none";
+
+  const countdownTimer = setInterval(() => {
+    countdown--;
+    transitionCountdown.textContent = `Starting in ${countdown}...`;
+    if (countdown === 0) {
+      clearInterval(countdownTimer);
+      transitionPage.classList.remove("active");
+      if (nextLevelKey === "end") showResult();
+      else selectDifficulty(nextLevelKey);
+    }
+  }, 1000);
+}
+
+function showResult() {
+  quizBox.style.display = "none";
+  transitionPage.classList.add("active");
+  transitionTitle.textContent = "🏆 Congratulations!";
+  transitionCountdown.textContent = `You’ve completed all levels! Final Score: ${score}`;
+  restartBtn.style.display = "block";
+}
+
+function restartQuiz() {
+  transitionPage.classList.remove("active");
+  restartBtn.style.display = "none";
+  difficultyBox.style.display = "flex";
+  score = 0;
+  current = 0;
+}
+</script>
+</body>
+</html>
